@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  db-desafio-02:
+    image: mysql:5.7
+    # executa o comando após o entrypoint.
+    command: --innodb-use-native-aio=0
+    container_name: db-desafio-02
+    # reiniciar o container caso caia.
+    restart: always
+    # Habilita a interação com o container. 
+    tty: true
+    volumes:
+      - ./node/db/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=db_desafio_02
+      - MYSQL_ROOT_PASSWORD=fullcycle
+    networks:
+      - node-network
+
+  app-desafio-02:
+    build: 
+      context: ./node
+      dockerfile: dockerfile.prod
+    entrypoint: dockerize --wait tcp://db-desafio-02:3306 --timeout 20s docker-entrypoint.sh
+    command: node index.js
+    image: leorms11/node-app-desafio-02
+    container_name: node-app-desafio-02
+    networks:
+      - node-network
+    volumes:
+      - ./node:/usr/src/app
+    tty: true
+    ports:
+      - "3000:3000"
+
+  nginx-desafio-02:
+    build:
+      context: ./nginx
+      dockerfile: dockerfile.prod
+    image: leorms11/nginx-desafio-02
+    container_name: nginx-desafio-02
+    networks: 
+      - node-network
+    ports:
+      - "8080:80"
+    depends_on:
+      - db-desafio-02
+      - app-desafio-02
+
+networks:
+  node-network:
+    driver: bridge
+    
