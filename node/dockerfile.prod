@@ -1,18 +1,17 @@
-FROM node:20.18.0
+FROM node:10-alpine
 
-WORKDIR /usr/src/app
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-ENV DOCKERIZE_VERSION=v0.8.0
+WORKDIR /home/node/app
 
-RUN apt-get update \
-    && apt-get install -y wget \
-    && wget -O - "https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz" | tar xzf - -C /usr/local/bin \
-    && apt-get autoremove -yqq --purge wget && rm -rf /var/lib/apt/lists/*
-
-COPY package*.json .
+COPY package*.json ./
 
 USER node
 
+RUN npm install
+
 COPY --chown=node:node . .
 
-RUN npm i
+EXPOSE 8080
+
+CMD [ "node", "app.js" ]
