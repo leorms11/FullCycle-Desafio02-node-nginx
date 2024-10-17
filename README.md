@@ -19,4 +19,5 @@ Obs: Quando a aplicação node é inicializada, a base é limpa e populada com 1
 Acessar http://localhost:8080/
 Retorno esperado:
 
-![image](https://github.com/user-attachments/assets/44cb68e7-9dd4-4443-bc92-e2cf852ee6fa)
+![image](https://github.com/user-attachments/assets/a3fdcd3f-d2ab-4795-8f44-11dcee09e939)
+
